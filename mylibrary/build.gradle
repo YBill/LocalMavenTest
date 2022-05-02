@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 30
@@ -27,29 +27,81 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
+    implementation 'me.drakeet.support:toastcompat:1.1.0'
 }
 
-repositories {
-    mavenCentral()
+// 增加上传源码的task
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = "sources"
 }
 
-uploadArchives {
-    repositories.mavenDeployer {
+// 方式一：
 
-        // 远程仓库
-//        repository(url: "http://www.xxx.com/repo") {
-//            authentication(userName: "admin", password: "xxx")
-//        }
+/*
+publishing {
+    publications {
+        publish2Local(MavenPublication) {
+            groupId = "cn.bill.library"
+            artifactId = "mylib"
+            version = "1.0.0"
 
-        // 设置本地的Maven地址
-        // 这里是相对路径表示当前目录上一级目录的repo下，也可以写绝对路径
-        repository(url: uri('../repo'))
+            artifact sourceJar // 增加上传源码的 task
 
-        pom.artifactId = "mylib"
-        pom.groupId = "cn.bill.library"
-        pom.version = "1.0.0"
+            // Android Lib 用这个生成aar，注意不写components生成的文件中没有aar文件，没法调用
+            // 依赖 bundleReleaseAar 任务，并上传其产出的aar
+            afterEvaluate { artifact(tasks.getByName("bundleReleaseAar")) }
 
+            // pom文件中声明依赖，从而传递到使用方
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.each {
+                    // 避免出现空节点或 artifactId=unspecified 的节点
+                    if (it.group != null && (it.name != null && "unspecified" != it.name) && it.version != null) {
+                        println "dependency=${it.toString()}"
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                        dependencyNode.appendNode('scope', 'implementation')
+                    }
+                }
+            }
+        }
     }
 
+    repositories {
+        maven {
+            url = "../repo"
+        }
+    }
+}*/
 
+// 方式二：
+
+afterEvaluate {
+    publishing {
+        publications {
+            publish2Local(MavenPublication) {
+                groupId = "cn.bill.library"
+                artifactId = "mylib"
+                version = "1.0.0"
+
+                artifact sourceJar // 增加上传源码的 task
+
+//            from components.java // Java Lib 使用这个
+
+                // 使用 Android Gradle 插件生成的组件，作为发布的内容
+                from components.release // Android Lib 使用这个
+
+            }
+
+        }
+
+        repositories {
+            maven {
+                url = "../repo"
+            }
+        }
+    }
 }
