@@ -12,11 +12,6 @@ apply plugin: 'maven'
 uploadArchives {
     repositories.mavenDeployer {
 
-        // 远程仓库
-//        repository(url: "http://www.xxx.com/repo") {
-//            authentication(userName: "admin", password: "xxx")
-//        }
-
         // 设置本地的Maven地址
         // 这里是相对路径表示当前目录上一级目录的repo下，也可以写绝对路径
         repository(url: uri('../repo'))
