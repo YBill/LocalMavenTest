@@ -50,6 +50,8 @@ publishing {
 }
 ```
 
+##### 注：pom.withXml 的作用是为了传递依赖，可以在生成的 pom 文件中查看有没有依赖，就是在当前要发布到 maven 的 module 中（如mylibrary）通过 implementation 引用了某个库（如mylibrary中引入的toastcompat库），然后在使用当前 maven 仓库的 module 中（如app）引用不了toastcompat库，通过 pom.withXml 处理后就可以在 app 中使用了
+
 ##### 3、完成后在 AS 右侧找到 Gradle 面板，在要发布的 Module 下的 Tasks 下的 publishing 展开，点击 publish 就可以得到本地 Maven 文件，路径就是上面 repository 中配置的 url
 
 ##### 注：如果在 Gradle 面板中没有，则在 AS 的 Preferences 中找到 Experimental，在 Gradle 下有个选项，"Do not build Gradle task list during Gradle Sycn"，把勾去掉就可以了
@@ -138,3 +140,5 @@ implementation 'cn.bill.library:mylib:1.0.0'
 但是在 Android Gradle 插件 3.6.0 及更高版本（说的是这里 classpath 'com.android.tools.build:gradle:3.6.0'）之后，也支持 maven-publish 插件了，使配置可以更加简洁。
 
 将 publications 放到 afterEvaluate 内就可以了传递依赖了，并且使用 from components.release 发布依赖就可以生成 aar 了
+
+### 注：关于生成注释，试了感觉没生效，暂时不处理了
