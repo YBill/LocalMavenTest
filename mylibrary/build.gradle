@@ -1,0 +1,55 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+
+}
+
+repositories {
+    mavenCentral()
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+
+        // 远程仓库
+//        repository(url: "http://www.xxx.com/repo") {
+//            authentication(userName: "admin", password: "xxx")
+//        }
+
+        // 设置本地的Maven地址
+        // 这里是相对路径表示当前目录上一级目录的repo下，也可以写绝对路径
+        repository(url: uri('../repo'))
+
+        pom.artifactId = "mylib"
+        pom.groupId = "cn.bill.library"
+        pom.version = "1.0.0"
+
+    }
+
+
+}
