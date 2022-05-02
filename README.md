@@ -26,7 +26,7 @@ uploadArchives {
 }
 ```
 
-##### 3、完成后在 AS 右侧找到 Gradle 面板，点击 uploadArchives 就可以得到本地 Maven 文件，路径就是上面 repository 中配置的 url
+##### 3、完成后在 AS 右侧找到 Gradle 面板，在要发布的 Module 下的 Tasks 下的 upload 展开，点击 uploadArchives 就可以得到本地 Maven 文件，路径就是上面 repository 中配置的 url
 
 ##### 注：如果在 Gradle 面板中没有，则在 AS 的 Preferences 中找到 Experimental，在 Gradle 下有个选项，"Do not build Gradle task list during Gradle Sycn"，把勾去掉就可以了
 
