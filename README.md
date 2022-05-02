@@ -1,5 +1,7 @@
 # 添加本地 Maven 步骤
 
+### 使用 maven 插件发布 aar 到 maven 仓库的方式：
+
 ##### 1、新建一个 Android Module
 
 ##### 2、在新建的 Module 的 build.gradle 中添加：
@@ -48,3 +50,5 @@ allprojects {
 implementation 'cn.bill.library:mylib:1.0.0'
 
 ```
+
+### 注：关于生成注释，试了感觉没生效，暂时不处理了
