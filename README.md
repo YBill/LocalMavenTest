@@ -1,55 +1,36 @@
-# 添加本地 Maven 步骤
+# 发布aar包到maven仓库
 
-##### 1、新建一个 Android Module
+### 有两种方式：
 
-##### 2、在新建的 Module 的 build.gradle 中添加：
+- maven 插件（旧版）：在 Gradle 6.2 之后，就完全被弃用了（增加了 @Deprecated 注解）
 
-```
-apply plugin: 'maven'
-```
+- maven-publish 插件 (推荐)
 
-```
-uploadArchives {
-    repositories.mavenDeployer {
-
-        // 远程仓库
-//        repository(url: "http://www.xxx.com/repo") {
-//            authentication(userName: "admin", password: "xxx")
-//        }
-
-        // 设置本地的Maven地址
-        // 这里是相对路径表示当前目录上一级目录的repo下，也可以写绝对路径
-        repository(url: uri('../repo'))
-
-        pom.artifactId = "mylib"
-        pom.groupId = "cn.bill.library"
-        pom.version = "1.0.0"
-
-    }
+maven插件，是 Gradle 1.0 的时候提供的用于发布aar/jar包到 Maven 仓库的插件。在 Gradle 1.3 中，引入了一种新的发布插件，即：maven-publish ，这个新的插件引入了一些新概念和新功能，使 Gradle 发布功能更加强大，现在是发布工件的首选选项。
 
 
-}
-```
+##### 1、什么是 POM
 
-##### 3、完成后在 AS 右侧找到 Gradle 面板，点击 uploadArchives 就可以得到本地 Maven 文件，路径就是上面 repository 中配置的 url
+POM（Project Object Model）指项目对象模型，用于描述项目构件的基本信息。一个有效的 POM 节点中主要包含以下信息：
 
-##### 注：如果在 Gradle 面板中没有，则在 AS 的 Preferences 中找到 Experimental，在 Gradle 下有个选项，"Do not build Gradle task list during Gradle Sycn"，把勾去掉就可以了
+- groupId：组（如：com.github.bumptech.glide）
+- artifactId：名称（如：glide）
+- version：版本（如：1.0.0）
+- packaging：打包的格式（如：aar/jar）
 
-##### 4、使用：配置本地 Maven 仓库，在项目的 build.gradle 中添加：
+##### 2、什么是仓库
 
-```
-allprojects {
-    repositories {
-        //本地仓库
-        maven{
-            url "$rootDir\\repo"
-        }
-    }
-}
-```
-##### 在 具体 module 的 build.gradle 中添加：
+在项目中，我们会需要依赖各种各样的二方库或三方库，这些依赖一定会存放在某个位置（Place），这个 “位置” 就叫做仓库。使用仓库可以帮助我们管理项目构件，例如 jar、aar 等等。
 
-```
-implementation 'cn.bill.library:mylib:1.0.0'
+##### 主流的构建工具都有三个层次的仓库概念：
 
-```
+
+- 1、本地仓库： 无论使用 Mac 还是 Window，计算机中会有一个目录用来存放从中央仓库或远程仓库下载的依赖文件；
+- 2、中央仓库： 开源社区提供的仓库，是绝大多数开源库的存放位置。比如 Maven 社区的中央仓库 Maven Central；
+- 3、私有仓库： 公司或组织的自定义仓库，可以理解为二方库的存放位置。
+
+##### 3、构建时搜索依赖的顺序如下：
+
+- 1、在本地仓库搜索，如果搜索不到，执行步骤 2；
+- 2、在中央仓库和私有仓库中搜索，搜索顺序按照repositories中声明的顺序依次查找。如果找到，则下载依赖文件到本地仓库，否则执行步骤 3；
+- 3、如果最终找不到依赖项，则抛出错误 “无法找到依赖项”。

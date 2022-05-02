@@ -16,10 +16,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        //本地仓库
-        maven{
-            url "$rootDir\\repo"
-        }
     }
 }
 
