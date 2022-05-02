@@ -1,9 +1,11 @@
 package com.bill.localmaventest;
 
 import androidx.appcompat.app.AppCompatActivity;
+import me.drakeet.support.toast.ToastCompat;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bill.mylibrary.TestUtils;
 
@@ -18,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 TestUtils.toast(getApplicationContext(), "Hello");
+
+//                ToastCompat.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
             }
         });
     }
